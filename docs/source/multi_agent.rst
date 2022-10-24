@@ -16,11 +16,10 @@ To that end, update the :ref:`environment configuration <Configuring an environm
   import highway_env
 
   env = gym.make('highway-v0')
-  env.seed(0)
 
   env.configure({"controlled_vehicles": 2})  # Two controlled vehicles
   env.configure({"vehicles_count": 1})  # A single other vehicle, for the sake of visualisation
-  env.reset()
+  env.reset(seed=0)
 
   from matplotlib import pyplot as plt
   %matplotlib inline
@@ -79,7 +78,7 @@ The type of observations contained in the tuple must be described by a standard 
       }
     }
   })
-  obs = env.reset()
+  obs, info = env.reset()
 
   import pprint
   pprint.pprint(obs)
@@ -116,21 +115,21 @@ Here is a pseudo-code example of how a centralized multi-agent policy could be t
     def predict(self, obs):
       return 0
 
-    def update(self, obs, action, next_obs, reward, info, done):
+    def update(self, obs, action, next_obs, reward, info, done, truncated):
       pass
   model = Model()
 
   # A training episode
-  obs = env.reset()
-  done = False
-  while not done:
+  obs, info = env.reset()
+  done = truncated = False
+  while not (done or truncated):
     # Dispatch the observations to the model to get the tuple of actions
     action = tuple(model.predict(obs_i) for obs_i in obs)
     # Execute the actions
-    next_obs, reward, info, done = env.step(action)
+    next_obs, reward, done, truncated, info = env.step(action)
     # Update the model with the transitions observed by each agent
     for obs_i, action_i, next_obs_i in zip(obs, action, next_obs):
-      model.update(obs_i, action_i, next_obs_i, reward, info, done)
+      model.update(obs_i, action_i, next_obs_i, reward, info, done, truncated)
     obs = next_obs
 
 

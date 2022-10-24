@@ -20,7 +20,7 @@ Here is a quick example of how to create an environment:
   env.reset()
   for _ in range(3):
       action = env.action_type.actions_indexes["IDLE"]
-      obs, reward, done, info = env.step(action)
+      obs, reward, done, truncated, info = env.step(action)
       env.render()
 
   plt.imshow(env.render(mode="rgb_array"))
@@ -111,11 +111,11 @@ Here is an example of SB3's DQN implementation trained on ``highway-fast-v0`` wi
   # Load and test saved model
   model = DQN.load("highway_dqn/model")
   while True:
-    done = False
-    obs = env.reset()
-    while not done:
+    done = truncated = False
+    obs, info = env.reset()
+    while not (done or truncated):
       action, _states = model.predict(obs, deterministic=True)
-      obs, reward, done, info = env.step(action)
+      obs, reward, done, truncated, info = env.step(action)
       env.render()
 
 A full run takes about 25mn on my laptop (fps=14). The following results are obtained:

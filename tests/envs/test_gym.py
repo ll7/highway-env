@@ -10,7 +10,6 @@ envs = [
     "intersection-v0",
     "intersection-v1",
     "parking-v0",
-    "summon-v0",
     "two-way-v0",
     "lane-keeping-v0",
     "racetrack-v0",
@@ -19,9 +18,9 @@ envs = [
 
 @pytest.mark.parametrize("env_spec", envs)
 def test_env_step(env_spec):
-    env = gym.make(env_spec, new_step_api=True)
+    env = gym.make(env_spec)
 
-    obs, info = env.reset(return_info=True)
+    obs, info = env.reset()
     assert env.observation_space.contains(obs)
 
     terminated = truncated = False
