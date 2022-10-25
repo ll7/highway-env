@@ -242,7 +242,8 @@ class AbstractEnv(gym.Env):
             if action is not None \
                     and not self.config["manual_control"] \
                     and self.steps % int(self.config["simulation_frequency"] // self.config["policy_frequency"]) == 0:
-                self.action_type.act(action)
+                #pass
+                self.action_type.act(action) # Issue #84 ego-vehicle behaves like IDM+Mobil
 
             self.road.act()
             self.road.step(1 / self.config["simulation_frequency"])
